@@ -3,7 +3,7 @@ import { ImageBackground, StyleSheet, View, Image, Text, Button } from 'react-na
 // import { PatrickHandSC } from "../assets/fonts/PatrickHandSC-Regular.ttf";
 // import {NavigationContainer} from '@react-navigation/native';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';
-function WelcomeScreen(props) {
+function WelcomeScreen({navigation}) {
     return (
         <ImageBackground
             style={styles.background}
@@ -14,7 +14,7 @@ function WelcomeScreen(props) {
             <Text style={styles.welcome}>welcome!</Text>
         </View>
         <View style={styles.start}>
-            <Button color='black' title="start" onPress={() => console.log("Button pressed")}/>
+            <Button color='black' title="start" onPress={() => navigation.navigate("Menu")}/>
         </View>
         </ImageBackground>
     );
@@ -34,7 +34,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 10,
         alignSelf: 'center',
-        fontFamily: "PatrickHandSC",
+        // fontFamily: 'PatrickHandSC_400Regular',
+        fontFamily: 'PatrickHandSC_400Regular',
     },
     start: {
         backgroundColor: 'white',
