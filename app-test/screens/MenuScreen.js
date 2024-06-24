@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity, TextInput, Image, Animated } from 'react-native';
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 
@@ -19,6 +19,32 @@ function MenuScreen(props) {
     const [editMode, toggleEditMode] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
     const [editedText, setEditedText] = useState('');
+
+    const rotateAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        if (editMode) {
+
+            const rotateAnimation = Animated.loop(
+                Animated.sequence([
+                    Animated.timing(rotateAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
+                    Animated.timing(rotateAnim, { toValue: -1, duration: 100, useNativeDriver: true }),
+                    Animated.timing(rotateAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
+                    Animated.timing(rotateAnim, { toValue: -1, duration: 100, useNativeDriver: true }),
+                    Animated.timing(rotateAnim, { toValue: 0, duration: 100, useNativeDriver: true }),
+                ])
+            );
+
+            Animated.parallel([rotateAnimation]).start();
+        } else {
+            rotateAnim.stopAnimation();
+        }
+    }, [editMode]);
+
+    const rotate = rotateAnim.interpolate({
+        inputRange: [-1, 1],
+        outputRange: ['-5deg', '5deg']
+    });
 
     const toggleCheck = (task) => {
         setCheckedTasks((prev) => ({
@@ -59,9 +85,11 @@ function MenuScreen(props) {
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.header}>To Do List</Text>
-            <TouchableOpacity style={styles.editContainer} onPress={() => toggleEditMode(!editMode)}>
-                <Image source={require("../assets/pencil-icon.png")}></Image>
-            </TouchableOpacity>
+            <Animated.View style={[styles.editContainer, { transform: [{ rotate }] }]}>
+                <TouchableOpacity onPress={() => toggleEditMode(!editMode)}>
+                    <Image source={require("../assets/pencil-icon.png")}></Image>
+                </TouchableOpacity>
+            </Animated.View>
 
             <View style={styles.contentContainer}>
                 {tasks.length === 0 ? (
